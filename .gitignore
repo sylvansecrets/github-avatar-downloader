@@ -46,5 +46,8 @@ jspm_packages
 # Yarn Integrity file
 .yarn-integrity
 
-# GIT User Authentication
+# GIT User Authentication Information
 git_auth
+
+# Saved Pictures
+avatars
