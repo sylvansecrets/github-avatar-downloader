@@ -25,7 +25,19 @@ function getHandler(error, response, body){
   }
   console.log('Response Status Code: ', response.statusCode);
   console.log('Response Content Type: ', response.headers['content-type']);
-  console.log(body);
+  // Array of Objects -> Array
+  // Takes the body, which is an array of objects, and returns the values of avatar_url in each object
+  var avatar_urls = [];
+  var parsedBody = JSON.parse(body);
+  for (contributor of parsedBody){
+    if (contributor.avatar_url){
+      avatar_urls.push(contributor.avatar_url);
+    }
+  }
+
+
+  // console.log(avatar_urls);
+  console.log(avatar_urls);
 }
 
 // getRepoContributors("jquery", "jquery", function(err, result) {
