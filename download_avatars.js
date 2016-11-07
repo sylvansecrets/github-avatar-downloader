@@ -21,6 +21,9 @@ function getRepoContributors(repoOwner, repoName, cb){
   return null;
 }
 
+// error, response, body (from request) -> undefined
+// side effects only
+// calls downloadImageByURL on each contributor's login and avatar_url
 function getHandler(error, response, body){
   if (error){
     throw error;
@@ -48,12 +51,15 @@ function getHandler(error, response, body){
 
 }
 
+// url, filePath -> undefined
+// side effects only
+// writes the content of the url
 function downloadImageByURL(url, filePath){
   var filename = filePath.substring(filePath.lastIndexOf('/')+1);
   request.get(url)
   .on ('error', (err) => {console.log("Error "+err); throw(err);})
   .on ('response', (response) => {
-    console.log('Downloading image ' + filename + " ...")
+    console.log('Downloading image for ' + filename + " ...")
   })
   .pipe(fs.createWriteStream(filePath))
   .on ('finish', () => {console.log('Downloading complete for ' + filename);})
@@ -64,6 +70,13 @@ function downloadImageByURL(url, filePath){
 //   console.log("Result:", result);
 // });
 
-getRepoContributors("jquery", "jquery", getHandler);
+// getRepoContributors("jquery", "jquery", getHandler);
 
-downloadImageByURL("https://avatars2.githubusercontent.com/u/2741?v=3&s=466", "./avatars/kvirani.jpg")
+// downloadImageByURL("https://avatars2.githubusercontent.com/u/2741?v=3&s=466", "./avatars/kvirani.jpg")
+
+input = process.argv.slice(2);
+if (input.length !== 2){
+  console.log("Please enter :owner :repo \nThe overall command should look like \nnode download_avatars <owner> <repo>")
+} else {
+  getRepoContributors(input[0], input[1], getHandler);
+}
