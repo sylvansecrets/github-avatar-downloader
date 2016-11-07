@@ -29,7 +29,6 @@ function getImages(error, response, body){
     throw error;
   }
   console.log('Response Status Code: ', response.statusCode);
-  console.log('Response Content Type: ', response.headers['content-type']);
   // Array of Objects -> Objects
   // Takes the body, which is an array of objects, and retreives/saves login:avatar_url
   var avatarUrls = {};
@@ -44,7 +43,6 @@ function getImages(error, response, body){
       downloadImageByURL(avatarUrls[name], './avatars/' + name);
     }
   }
-  console.log(avatarUrls);
 }
 
 // url, filePath -> undefined
