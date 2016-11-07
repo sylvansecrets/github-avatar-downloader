@@ -15,3 +15,11 @@ or more generally
 
 the avatars of all contributors will be downloaded to
 `./avatars`
+
+the authentication information needs to be added to 'git_auth', in the format
+```
+module.exports = {
+  user_name: <username>,
+  token: <authentication_token>
+}
+```
