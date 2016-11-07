@@ -49,14 +49,14 @@ function getImages(error, response, body){
 // side effects only
 // writes the content of the url
 function downloadImageByURL(url, filePath){
-  var filename = filePath.substring(filePath.lastIndexOf('/')+1);
+  var filename = filePath.substring(filePath.lastIndexOf('/') + 1);
   request.get(url)
-  .on ('error',(err) => {console.log("Error "+err); throw err;})
-  .on ('response',(response) => {
+  .on('error', (err) => { console.log("Error " + err); throw err; })
+  .on('response', (response) => {
     console.log('Downloading image for ' + filename + " ...");
   })
   .pipe(fs.createWriteStream(filePath))
-  .on ('finish', () => { console.log('Downloading complete for ' + filename); });
+  .on('finish', () => { console.log('Downloading complete for ' + filename); });
 }
 
 
