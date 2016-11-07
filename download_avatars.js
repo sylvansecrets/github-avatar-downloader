@@ -27,31 +27,36 @@ function getHandler(error, response, body){
   }
   console.log('Response Status Code: ', response.statusCode);
   console.log('Response Content Type: ', response.headers['content-type']);
-  // Array of Objects -> Array
-  // Takes the body, which is an array of objects, and returns the values of avatar_url in each object
-  var avatar_urls = [];
+  // Array of Objects -> Objects
+  // Takes the body, which is an array of objects, and retreives/saves login:avatar_url
+  var avatar_urls = {};
   var parsedBody = JSON.parse(body);
   for (contributor of parsedBody){
     if (contributor.avatar_url){
-      avatar_urls.push(contributor.avatar_url);
+      // avatar_urls.push(contributor.avatar_url);
+      // user_names.push(contributor.login);
+      avatar_urls[contributor.login] = contributor.avatar_url;
+    }
+  }
+  for (name in avatar_urls){
+    if (avatar_urls.hasOwnProperty(name)){
+      downloadImageByURL(avatar_urls[name], './avatars/'+name);
     }
   }
 
-
-  // console.log(avatar_urls);
   console.log(avatar_urls);
+
 }
 
 function downloadImageByURL(url, filePath){
+  var filename = filePath.substring(filePath.lastIndexOf('/')+1);
   request.get(url)
   .on ('error', (err) => {console.log("Error "+err); throw(err);})
   .on ('response', (response) => {
-    console.log('Response Status Code: ', response.statusCode);
-    console.log('Response Content Type: ', response.headers['content-type']);
-    console.log('Downloading image...')
+    console.log('Downloading image ' + filename + " ...")
   })
   .pipe(fs.createWriteStream(filePath))
-  .on ('finish', () => {console.log('Downloading complete');})
+  .on ('finish', () => {console.log('Downloading complete for ' + filename);})
 }
 
 // getRepoContributors("jquery", "jquery", function(err, result) {
