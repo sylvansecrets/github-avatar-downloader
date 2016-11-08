@@ -1,8 +1,14 @@
-const request = require('request');
-const gitAuth = require('./git_auth');
+var dotenv = require('dotenv');
+dotenv.load();
+// const gitAuth = require('./git_auth');
 const fs = require('fs');
-const GITHUB_USER = gitAuth.user_name;
-const GITHUB_TOKEN = gitAuth.token;
+const request = require('request');
+// const GITHUB_USER = gitAuth.user_name;
+// const GITHUB_TOKEN = gitAuth.token;
+const GITHUB_USER = process.env.GIT_USER;
+const GITHUB_TOKEN = process.env.TOKEN
+
+
 
 console.log('Welcome to the GitHub Avatar Downloader!');
 
