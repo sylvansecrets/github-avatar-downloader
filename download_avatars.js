@@ -65,5 +65,5 @@ input = process.argv.slice(2);
 if (input.length !== 2){
   console.log("Please enter :owner :repo \nThe overall command should look like \nnode download_avatars <owner> <repo>");
 } else {
-  getRepoContributors(input[0], input[1], getImages);
+  getRepoContributors.getRepoContributors(input[0], input[1], getImages, getRepoContributors.buildRepoContributors(input[0], input[1], getRepoContributors.authComplete()));
 }
