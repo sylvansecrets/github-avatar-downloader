@@ -1,4 +1,4 @@
-var getRepoContributors = require('./getRepoContributors');
+var gitUtils = require('./getRepoContributors');
 const request = require('request');
 var dotenv = require('dotenv');
 dotenv.load();
@@ -37,14 +37,7 @@ function getRecommends(error, response, body){
 
 function fetchStars(url){
   var requestURL;
-  if (typeof(GITHUB_USER) !== "undefined" && typeof(GITHUB_TOKEN) !== "undefined"){
-    requestURL = url.replace('https://', '');
-    requestURL = 'https://' + GITHUB_USER + ':' + GITHUB_TOKEN + "@" + requestURL;
-    // requestURL = 'https://' + GITHUB_USER + ':' + GITHUB_TOKEN + '@api.github.com/repos/' + repoOwner + '/' + repoName + '/contributors';
-  } else {
-    console.log('Credentials incomplete, USER:' + GITHUB_USER + ' AUTHENTICATION TOKEN: ' + GITHUB_TOKEN);
-    requestURL = 'https://api.github.com/repos/' + repoOwner + '/' + repoName + '/contributors';
-  }
+  requestURL = gitUtils.addAuth(url, gitUtils.authComplete());
   request.get({
     headers: {
       'User-Agent': 'GitHub Avatar Downloader - Student Project',
@@ -96,7 +89,7 @@ input = process.argv.slice(2);
 if (input.length !== 2){
   console.log("Please enter :owner :repo \nThe overall command should look like \nnode download_avatars <owner> <repo>");
 } else {
-  getRepoContributors(input[0], input[1], getRecommends);
+  gitUtils.getRepoContributors(input[0], input[1], getRecommends, gitUtils.buildRepoContributors(input[0], input[1], gitUtils.authComplete()));
 }
 
 // console.log(fetchStars('https://api.github.com/users/pbakaus/starred'));

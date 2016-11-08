@@ -43,4 +43,15 @@ function buildRepoContributors(repoOwner, repoName, auth){
   return requestURL;
 }
 
-module.exports = { getRepoContributors: getRepoContributors, buildRepoContributors:buildRepoContributors, authComplete:authComplete }
+function addAuth(url, auth){
+  var requestURL;
+  if (auth) {
+    requestURL = url.replace('https://', '');
+    requestURL = 'https://' + GITHUB_USER + ':' + GITHUB_TOKEN + "@" + requestURL;
+  } else {
+    requestURL = url;
+  }
+  return requestURL;
+}
+
+module.exports = { getRepoContributors: getRepoContributors, buildRepoContributors:buildRepoContributors, authComplete:authComplete, addAuth:addAuth }
