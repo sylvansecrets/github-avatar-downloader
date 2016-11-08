@@ -4,23 +4,16 @@ const GITHUB_USER = process.env.GIT_USER;
 const GITHUB_TOKEN = process.env.TOKEN;
 const request = require('request');
 
-
 // String, String, function -> undefined
 // calls callback function on the request GET of the repo
 function getRepoContributors(repoOwner, repoName, cb, url){
-  var requestURL;
-  requestURL = url;
-  request.get({
-    headers: {
-      'User-Agent': 'GitHub Avatar Downloader - Student Project',
-      'Content-Type': 'applicaiton/JSON'
-    },
-    uri: requestURL
-  }, (error, response, body) => { cb(error, response, body); });
+  var requestURL = url;
+  request.get(gitHead(requestURL), (error, response, body) => { cb(error, response, body); });
 }
 
-
 // checks if both the user and the token exist
+// prints a warning if the authentication information is incomplete
+// returns a boolean
 function authComplete(){
   var authBool;
   if (typeof(GITHUB_USER) !== "undefined" && typeof(GITHUB_TOKEN) !== "undefined"){
@@ -32,7 +25,8 @@ function authComplete(){
   return authBool;
 }
 
-
+// builds the url based on repoOwner and repoName
+// String, String, boolean ->  String
 function buildRepoContributors(repoOwner, repoName, auth){
   var requestURL;
   if (auth) {
@@ -43,6 +37,9 @@ function buildRepoContributors(repoOwner, repoName, auth){
   return requestURL;
 }
 
+// adds authentication to a url
+// returns original url if authentication is incomplete
+// String, boolean -> String
 function addAuth(url, auth){
   var requestURL;
   if (auth) {
@@ -54,4 +51,12 @@ function addAuth(url, auth){
   return requestURL;
 }
 
-module.exports = { getRepoContributors: getRepoContributors, buildRepoContributors:buildRepoContributors, authComplete:authComplete, addAuth:addAuth }
+// creates a request object from a url and a header
+// by default uses the github header
+// String, Object -> Object
+function gitHead(url, header){
+  header = header || { 'User-Agent': 'GitHub Avatar Downloader - Student Project' };
+  return { headers: header, url: url };
+}
+
+module.exports = { getRepoContributors: getRepoContributors, buildRepoContributors:buildRepoContributors, authComplete:authComplete, addAuth:addAuth, gitHead:gitHead }

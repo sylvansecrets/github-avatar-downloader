@@ -1,11 +1,7 @@
 var gitUtils = require('./getRepoContributors');
 const request = require('request');
-var dotenv = require('dotenv');
-dotenv.load();
-const GITHUB_USER = process.env.GIT_USER;
-const GITHUB_TOKEN = process.env.TOKEN;
-
-var fullStars = [];
+var starredArr = []
+var starCount;
 
 function getRecommends(error, response, body){
   if (error){
@@ -26,24 +22,16 @@ function getRecommends(error, response, body){
       starredUrls[contributor.login] = contributor.starred_url.substring(0, contributor.starred_url.length - 15);
     }
   }
-  starredArr = [];
   starCount = Object.keys(starredUrls).length;
   for (name in starredUrls){
     fetchStars(starredUrls[name]);
   }
-  // console.log(starredArr2);
-  // ask about this
 }
 
 function fetchStars(url){
   var requestURL;
   requestURL = gitUtils.addAuth(url, gitUtils.authComplete());
-  request.get({
-    headers: {
-      'User-Agent': 'GitHub Avatar Downloader - Student Project',
-      'Content-Type': 'applicaiton/JSON'
-    },
-    uri: requestURL}, (error, response, body) => {
+  request.get(gitUtils.gitHead(requestURL), (error, response, body) => {
     if (error){
       throw error;
     }
@@ -63,7 +51,7 @@ function fetchStars(url){
           starDict[hoshi] = 1;
         }
       }
-      // sort the dictionary after converting it to an array
+      // sort the dictionary in descending order after converting it to an array
       var starAA = [];
       for (key in starDict){
         starAA.push([key, starDict[key]])
@@ -71,17 +59,13 @@ function fetchStars(url){
       starAA.sort((a,b) => {
         return b[1] - a[1];
       })
-
+      // console log the first 5
       for (line of starAA.slice(0, 5)){
         console.log('[ ' + line[1] + " stars " + '] ' + line[0] + "\n")
       }
     }
   });
 }
-
-
-
-
 
 // takes input from the command line
 // recommends input format if input not of length 2

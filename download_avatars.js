@@ -1,15 +1,9 @@
-
-
 const fs = require('fs');
 const request = require('request');
-
-
-
 
 console.log('Welcome to the GitHub Avatar Downloader!');
 
 var gitUtils = require('./getRepoContributors')
-
 
 // error, response, body (from request) -> undefined
 // side effects only
