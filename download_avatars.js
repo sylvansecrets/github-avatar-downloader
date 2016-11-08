@@ -1,13 +1,12 @@
 var dotenv = require('dotenv');
-dotenv.load();
-// const gitAuth = require('./git_auth');
+
 const fs = require('fs');
 const request = require('request');
-// const GITHUB_USER = gitAuth.user_name;
-// const GITHUB_TOKEN = gitAuth.token;
-const GITHUB_USER = process.env.GIT_USER;
-const GITHUB_TOKEN = process.env.TOKEN
 
+
+dotenv.load();
+const GITHUB_USER = process.env.GIT_USER;
+const GITHUB_TOKEN = process.env.TOKEN;
 
 
 console.log('Welcome to the GitHub Avatar Downloader!');
@@ -15,7 +14,13 @@ console.log('Welcome to the GitHub Avatar Downloader!');
 // String, String, function -> undefined
 // calls callback function on the request GET of the repo
 function getRepoContributors(repoOwner, repoName, cb){
-  var requestURL = 'https://' + GITHUB_USER + ':' + GITHUB_TOKEN + '@api.github.com/repos/' + repoOwner + '/' + repoName + '/contributors';
+  var requestURL;
+  if (typeof(GITHUB_USER) !== "undefined" && typeof(GITHUB_TOKEN) !== "undefined"){
+    requestURL = 'https://' + GITHUB_USER + ':' + GITHUB_TOKEN + '@api.github.com/repos/' + repoOwner + '/' + repoName + '/contributors';
+  } else {
+    console.log('Credentials incomplete, USER:' + GITHUB_USER + ' AUTHENTICATION TOKEN: ' + GITHUB_TOKEN);
+    requestURL = 'https://api.github.com/repos/' + repoOwner + '/' + repoName + '/contributors'
+  }
   console.log(requestURL);
   request.get({
     headers: {
@@ -35,6 +40,11 @@ function getImages(error, response, body){
     throw error;
   }
   console.log('Response Status Code: ', response.statusCode);
+  if (response.statusCode == 401){
+    console.log('The credentials entered are not valid.');
+  } else if (response.statusCode == 404) {
+    console.log('The provided owner/repo does not exist');
+  }
   // Array of Objects -> Objects
   // Takes the body, which is an array of objects, and retreives/saves login:avatar_url
   var avatarUrls = {};
@@ -56,6 +66,9 @@ function getImages(error, response, body){
 // writes the content of the url
 function downloadImageByURL(url, filePath){
   var filename = filePath.substring(filePath.lastIndexOf('/') + 1);
+  var filedir = filePath.substring(0, filePath.lastIndexOf('/'))
+  // make the parent directory
+  fs.mkdir(filedir, (e) => { });
   request.get(url)
   .on('error', (err) => { console.log("Error " + err); throw err; })
   .on('response', (response) => {
@@ -64,6 +77,10 @@ function downloadImageByURL(url, filePath){
   .pipe(fs.createWriteStream(filePath))
   .on('finish', () => { console.log('Downloading complete for ' + filename); });
 }
+
+//
+
+
 
 
 // takes input from the command line
