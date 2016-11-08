@@ -51,3 +51,6 @@ git_auth
 
 # Saved Pictures
 avatars
+
+# All environment files
+*.env
