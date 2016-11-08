@@ -32,6 +32,7 @@ function getRecommends(error, response, body){
     fetchStars(starredUrls[name]);
   }
   // console.log(starredArr2);
+  // ask about this
 }
 
 function fetchStars(url){

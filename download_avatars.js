@@ -1,34 +1,14 @@
-var dotenv = require('dotenv');
+
 
 const fs = require('fs');
 const request = require('request');
 
 
-dotenv.load();
-const GITHUB_USER = process.env.GIT_USER;
-const GITHUB_TOKEN = process.env.TOKEN;
 
 
 console.log('Welcome to the GitHub Avatar Downloader!');
 
-// String, String, function -> undefined
-// calls callback function on the request GET of the repo
-function getRepoContributors(repoOwner, repoName, cb){
-  var requestURL;
-  if (typeof(GITHUB_USER) !== "undefined" && typeof(GITHUB_TOKEN) !== "undefined"){
-    requestURL = 'https://' + GITHUB_USER + ':' + GITHUB_TOKEN + '@api.github.com/repos/' + repoOwner + '/' + repoName + '/contributors';
-  } else {
-    console.log('Credentials incomplete, USER:' + GITHUB_USER + ' AUTHENTICATION TOKEN: ' + GITHUB_TOKEN);
-    requestURL = 'https://api.github.com/repos/' + repoOwner + '/' + repoName + '/contributors';
-  }
-  request.get({
-    headers: {
-      'User-Agent': 'GitHub Avatar Downloader - Student Project',
-      'Content-Type': 'applicaiton/JSON'
-    },
-    uri: requestURL
-  }, (error, response, body) => { cb(error, response, body); });
-}
+var getRepoContributors = require('./getRepoContributors')
 
 
 // error, response, body (from request) -> undefined
@@ -60,7 +40,9 @@ function getImages(error, response, body){
   }
 }
 
-
+// url, filePath -> undefined
+// side effects only
+// writes image at url to filePath
 function downloadImageByURL(url, filePath){
   var filename = filePath.substring(filePath.lastIndexOf('/') + 1);
   var filedir = filePath.substring(0, filePath.lastIndexOf('/'));
@@ -76,10 +58,6 @@ function downloadImageByURL(url, filePath){
   console.log("Image retreived for " + filename);
   })
 }
-
-
-
-
 
 // takes input from the command line
 // recommends input format if input not of length 2
