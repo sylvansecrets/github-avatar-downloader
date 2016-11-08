@@ -7,14 +7,9 @@ const request = require('request');
 
 // String, String, function -> undefined
 // calls callback function on the request GET of the repo
-module.exports = function getRepoContributors(repoOwner, repoName, cb){
+function getRepoContributors(repoOwner, repoName, cb, url){
   var requestURL;
-  var authBool = authComplete();
-  if (authBool){
-    requestURL = 'https://' + GITHUB_USER + ':' + GITHUB_TOKEN + '@api.github.com/repos/' + repoOwner + '/' + repoName + '/contributors';
-  } else {
-    requestURL = 'https://api.github.com/repos/' + repoOwner + '/' + repoName + '/contributors';
-  }
+  requestURL = url;
   request.get({
     headers: {
       'User-Agent': 'GitHub Avatar Downloader - Student Project',
@@ -36,3 +31,16 @@ function authComplete(){
   }
   return authBool;
 }
+
+
+function buildRepoContributors(repoOwner, repoName, auth){
+  var requestURL;
+  if (auth) {
+    requestURL = 'https://' + GITHUB_USER + ':' + GITHUB_TOKEN + '@api.github.com/repos/' + repoOwner + '/' + repoName + '/contributors';
+  } else {
+    requestURL = 'https://api.github.com/repos/' + repoOwner + '/' + repoName + '/contributors';
+  }
+  return requestURL;
+}
+
+module.exports = { getRepoContributors: getRepoContributors, buildRepoContributors:buildRepoContributors, authComplete:authComplete }
