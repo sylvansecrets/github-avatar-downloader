@@ -19,9 +19,8 @@ function getRepoContributors(repoOwner, repoName, cb){
     requestURL = 'https://' + GITHUB_USER + ':' + GITHUB_TOKEN + '@api.github.com/repos/' + repoOwner + '/' + repoName + '/contributors';
   } else {
     console.log('Credentials incomplete, USER:' + GITHUB_USER + ' AUTHENTICATION TOKEN: ' + GITHUB_TOKEN);
-    requestURL = 'https://api.github.com/repos/' + repoOwner + '/' + repoName + '/contributors'
+    requestURL = 'https://api.github.com/repos/' + repoOwner + '/' + repoName + '/contributors';
   }
-  console.log(requestURL);
   request.get({
     headers: {
       'User-Agent': 'GitHub Avatar Downloader - Student Project',
@@ -61,24 +60,23 @@ function getImages(error, response, body){
   }
 }
 
-// url, filePath -> undefined
-// side effects only
-// writes the content of the url
+
 function downloadImageByURL(url, filePath){
   var filename = filePath.substring(filePath.lastIndexOf('/') + 1);
-  var filedir = filePath.substring(0, filePath.lastIndexOf('/'))
+  var filedir = filePath.substring(0, filePath.lastIndexOf('/'));
   // make the parent directory
   fs.mkdir(filedir, (e) => { });
-  request.get(url)
-  .on('error', (err) => { console.log("Error " + err); throw err; })
-  .on('response', (response) => {
-    console.log('Downloading image for ' + filename + " ...");
+  request.get({url:url, encoding: "binary"}, (error, response, body) => {
+    response.setEncoding('binary');
+    if (error) { throw err; }
+    var suffix = response.headers['content-type'];
+    suffix = suffix.substring(suffix.lastIndexOf('/') + 1);
+    var writePath = filePath+"."+suffix;
+  fs.writeFile(writePath, body, 'binary', (err) => { });
+  console.log("Image retreived for " + filename);
   })
-  .pipe(fs.createWriteStream(filePath))
-  .on('finish', () => { console.log('Downloading complete for ' + filename); });
 }
 
-//
 
 
 
